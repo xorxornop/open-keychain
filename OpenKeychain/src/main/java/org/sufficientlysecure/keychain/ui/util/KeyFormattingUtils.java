@@ -105,6 +105,10 @@ public class KeyFormattingUtils {
                 return "ECDH (" + oidName + ")";
             }
 
+            case PublicKeyAlgorithmTags.EDDSA: {
+                return "EdDSA";
+            }
+
             default: {
                 if (context != null) {
                     algorithmStr = context.getResources().getString(R.string.unknown);
