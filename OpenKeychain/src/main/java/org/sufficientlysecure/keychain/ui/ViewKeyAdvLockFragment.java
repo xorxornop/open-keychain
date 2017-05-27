@@ -333,19 +333,40 @@ public class ViewKeyAdvLockFragment extends LoaderFragment implements OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.lock_method_choice_none:
-                setNewUnlockMechanism(ChangeUnlockParcel.createUnLockParcelForNewKey(new Passphrase()));
+                checkAndRemovePassword();
                 break;
             case R.id.lock_method_choice_password:
                 viewAnimator.setDisplayedChild(ANIMATOR_CHILD_PASSWORD);
                 break;
             case R.id.lock_button_password_save:
-                Passphrase x = new Passphrase(lockPasswordField);
-                setNewUnlockMechanism(ChangeUnlockParcel.createUnLockParcelForNewKey(x));
+                checkAndSavePassword();
                 break;
             case R.id.lock_button_password_back:
                 showLockChoices();
                 break;
         }
+    }
+
+    private void checkAndRemovePassword() {
+        if (currentLockType == LockType.NONE) {
+            endActionMode();
+            return;
+        }
+
+        setNewUnlockMechanism(ChangeUnlockParcel.createUnLockParcelForNewKey(new Passphrase()));
+    }
+
+    private void checkAndSavePassword() {
+        hideKeyboard();
+
+        Passphrase first = new Passphrase(lockPasswordField);
+        Passphrase second = new Passphrase(lockPasswordRepeat);
+        if (!first.equals(second)) {
+            Notify.create(getActivity(), "Passwords don't match!", Style.ERROR).show();
+            return;
+        }
+
+        setNewUnlockMechanism(ChangeUnlockParcel.createUnLockParcelForNewKey(first));
     }
 
     private void showLockChoices() {
